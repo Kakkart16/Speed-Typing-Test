@@ -10,19 +10,21 @@ class TypeSpeedGUI:
         self.root.title("Typing Speed Appliacation")
         self.root.geometry("800x600")
         
+        self.root.configure(bg="#323437")
+        
         self.texts = open("texts.txt", "r").read().split("\n")
         
-        self.frame = tk.Frame(self.root)
+        self.frame = tk.Frame(self.root, bg="#323437")
         
-        self.sample_label = tk.Label(self.frame, text=random.choice(self.texts), font=("Helvetica", 18), wraplength=600, justify="center")
+        self.sample_label = tk.Label(self.frame, text=random.choice(self.texts), font=("Helvetica", 18),fg = "#d1d0c5", bg="#323437", wraplength=600, justify="center")
         self.sample_label.grid(row=0, column=0, columnspan=2, padx=5, pady=10)
         
         
-        self.input_entry = tk.Entry(self.frame, width=40, font=("Helvetica", 24))
+        self.input_entry = tk.Entry(self.frame, width=40, font=("Helvetica", 24), bg="#323437")
         self.input_entry.grid(row=1, column=0, columnspan=2, padx=5, pady=10)
         self.input_entry.bind("<KeyRelease>", self.start)
         
-        self.speed_label = tk.Label(self.frame, text="Speed: \n0.00 CPS\n0.00 CPM\n0.00 WPS\n0.00 WPM", font=("Helvectica", 18))
+        self.speed_label = tk.Label(self.frame, text="Speed: \n0.00 CPS\n0.00 CPM\n0.00 WPS\n0.00 WPM", font=("Helvectica", 18), fg = "#d1d0c5", bg="#323437")
         self.speed_label.grid(row=2, column=0, columnspan=2, padx=5, pady=10)
 
         self.reset_button = tk.Button(self.frame, text="Reset", command=self.reset, font=("Helvetica", 24))
@@ -41,10 +43,11 @@ class TypeSpeedGUI:
                 self.running = True
                 t = threading.Thread(target=self.time_thread)
                 t.start()
+        
         if not self.sample_label.cget('text').startswith(self.input_entry.get()):
             self.input_entry.config(fg="red")
         else:
-            self.input_entry.config(fg="black")
+            self.input_entry.config(fg="#d1d0c5")
         
         if self.input_entry.get() == self.sample_label.cget('text'):
             self.running = False
