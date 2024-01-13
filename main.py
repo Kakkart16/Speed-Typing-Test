@@ -2,8 +2,12 @@ import tkinter as tk
 import time
 import threading
 import random
+from tkinter import PhotoImage
+from text import easySentence, mediumSentence, hardSentence
 
 class TypeSpeedGUI:
+    
+    # level = "easy"
     
     def __init__(self):
         self.root = tk.Tk()
@@ -12,23 +16,27 @@ class TypeSpeedGUI:
         
         self.root.configure(bg="#323437")
         
-        self.texts = open("texts.txt", "r").read().split("\n")
+        img = tk.PhotoImage(file='gundam.png')
+        self.root.iconphoto(True, img)
         
         self.frame = tk.Frame(self.root, bg="#323437")
         
-        self.sample_label = tk.Label(self.frame, text=random.choice(self.texts), font=("Helvetica", 18),fg = "#d1d0c5", bg="#323437", wraplength=600, justify="center")
-        self.sample_label.grid(row=0, column=0, columnspan=2, padx=5, pady=10)
+        
+
+        
+        self.sample_label = tk.Label(self.frame, text="", font=("Helvetica", 18),fg = "#d1d0c5", bg="#323437", wraplength=600, justify="center")
+        self.sample_label.grid(row=1, column=0, columnspan=2, padx=5, pady=30)
         
         
-        self.input_entry = tk.Entry(self.frame, width=40, font=("Helvetica", 24), bg="#323437")
-        self.input_entry.grid(row=1, column=0, columnspan=2, padx=5, pady=10)
+        self.input_entry = tk.Entry(self.frame, width=40, font=("Helvetica", 24), bg="#c0c0c0")
+        self.input_entry.grid(row=2, column=0, columnspan=2, padx=5, pady=20, ipadx=10, ipady=10)
         self.input_entry.bind("<KeyRelease>", self.start)
         
-        self.speed_label = tk.Label(self.frame, text="Speed: \n0.00 CPS\n0.00 CPM\n0.00 WPS\n0.00 WPM", font=("Helvectica", 18), fg = "#d1d0c5", bg="#323437")
-        self.speed_label.grid(row=2, column=0, columnspan=2, padx=5, pady=10)
+        self.speed_label = tk.Label(self.frame, text="Speed: 0.00 CPS 0.00 CPM 0.00 WPS 0.00 WPM", font=("Helvectica", 18), fg = "#d1d0c5", bg="#323437")
+        self.speed_label.grid(row=3, column=0, columnspan=2, padx=5, pady=10)
 
-        self.reset_button = tk.Button(self.frame, text="Reset", command=self.reset, font=("Helvetica", 24))
-        self.reset_button.grid(row=3, column=0, columnspan=2, padx=5, pady=10)
+        self.reset_button = tk.Button(self.frame, text="Reset", command=self.reset, font=("Helvetica", 20),bg="#c0c0c0")
+        self.reset_button.grid(row=4, column=0, columnspan=2, padx=5, pady=10)
         
         self.frame.pack(expand=True)
         
@@ -47,7 +55,7 @@ class TypeSpeedGUI:
         if not self.sample_label.cget('text').startswith(self.input_entry.get()):
             self.input_entry.config(fg="red")
         else:
-            self.input_entry.config(fg="#d1d0c5")
+            self.input_entry.config(fg="black")
         
         if self.input_entry.get() == self.sample_label.cget('text'):
             self.running = False
@@ -58,18 +66,36 @@ class TypeSpeedGUI:
         while self.running:
             time.sleep(0.1)
             self.counter += 0.1
-            cps = len(self.input_entry.get()) / self.counter
+            if self.counter == 0:
+                cps = 0; cpm = 0
+            else:
+                cps = len(self.input_entry.get()) / self.counter
             cpm = cps * 60
-            wps = len(self.input_entry.get().split(" ")) / self.counter
+            if self.counter == 0:
+                wps = 0; wpm = 0
+            else:
+                wps = len(self.input_entry.get().split(" ")) / self.counter
             wpm = wps * 60
-            self.speed_label.config(text=f"Speed: \n{cps:.2f} CPS\n{cpm:.2f} CPM\n{wps:.2f} WPS\n{wpm:.2f} WPM")
+            self.speed_label.config(text=f"Speed:  {cps:.2f} CPS {cpm:.2f} CPM {wps:.2f} WPS {wpm:.2f} WPM")
             
         
     def reset(self):
         self.running = False
         self.counter = 0
-        self.speed_label.config(text="Speed: \n0.00 CPS\n0.00 CPM\n0.00 WPS\n0.00 WPM")
-        self.sample_label.config(text=random.choice(self.texts))
+        self.speed_label.config(text="Speed: 0.00 CPS 0.00 CPM 0.00 WPS 0.00 WPM")
+        self.randomSentence()
         self.input_entry.delete(0, tk.END)
+    
+    
+    def randomSentence(self):
+        level = "easy"
+        if level == "easy":
+            random_text =  easySentence()
+        elif level == "medium":
+            random_text = mediumSentence()
+        else:
+            random_text = hardSentence()
+        
+        self.sample_label.config(text=random_text)
     
 TypeSpeedGUI()
