@@ -20,11 +20,12 @@ class SentenceGenerator:
 def hardSentence():
     generator = SentenceGenerator()
     random_sentence = generator.generate_sentence()
-    print(random_sentence)
+    print("hard sentence")
 
     
 # Medium Sentence
 def mediumSentence():
+        print("medium sentence")
         return lorem.words(30)
     
 
@@ -55,5 +56,6 @@ def generate_random_sentence(word_list, sentence_length=30):
 def easySentence():
     common_words_list = get_common_words_list()
     random_sentence = generate_random_sentence(common_words_list, sentence_length=30)
+    print("easy sentence")
     return random_sentence
 
