@@ -9,7 +9,7 @@ class SentenceGenerator:
         self.words = set(words.words())
         self.brown_words = set(brown.words())
 
-    def generate_sentence(self, length=30):
+    def generate_sentence(self, length=20):
         sentence = []
         for _ in range(length):
             word = random.choice(list(self.words.union(self.brown_words)))
@@ -26,7 +26,7 @@ def hardSentence():
 # Medium Sentence
 def mediumSentence():
         print("medium sentence")
-        return lorem.words(30)
+        return lorem.words(20)
     
 
 
@@ -48,14 +48,16 @@ def get_common_words_list():
     
     return common_words
 
-def generate_random_sentence(word_list, sentence_length=30):
+def generate_random_sentence(word_list, sentence_length=10):
     sentence = random.sample(word_list, min(sentence_length, len(word_list)))
     return ' '.join(sentence)
 
 
 def easySentence():
     common_words_list = get_common_words_list()
-    random_sentence = generate_random_sentence(common_words_list, sentence_length=30)
+    random_sentence = generate_random_sentence(common_words_list, sentence_length=15)
     print("easy sentence")
     return random_sentence
+
+
 

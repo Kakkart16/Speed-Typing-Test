@@ -5,83 +5,77 @@ import threading
 import random
 from tkinter import PhotoImage
 from text import easySentence, mediumSentence, hardSentence
+from sentences import easy_paragraph, medium_paragraph, hard_paragraph
+
+import customtkinter
+
+customtkinter.set_appearance_mode("dark")
+customtkinter.set_default_color_theme("dark-blue")
 
 class TypeSpeedGUI:
-    
-    # level = "easy"
-    
+        
     def __init__(self):
-        self.root = tk.Tk()
+        
+        self.root = customtkinter.CTk()
         self.root.title("Typing Speed Appliacation")
         self.root.geometry("800x600")
         
-        self.root.configure(bg="#323437")
+        # self.root.iconbitmap('gundam.png')
         
-        img = PhotoImage(file='gundam.png')
-        self.root.iconphoto(True, img)
+        self.frame = customtkinter.CTkFrame(master = self.root)
         
-        self.frame = tk.Frame(self.root, bg="#323437")
+        self.frame.pack(pady=20, padx=60, fill="both", expand=True)
         
+        self.difficulty = customtkinter.StringVar(value="easy") 
+        difficulty_menu = customtkinter.CTkComboBox(
+            self.frame, 
+            values=["easy", "medium", "hard"],
+            variable = self.difficulty,
+            command=self.changeDifficulty
+        )
+        difficulty_menu.pack(padx=30, pady=30)
+        # difficulty_menu.bind('<<ComboBoxSelected>>',self.changeDifficulty)
+       
         
-        self.difficulty_var = tk.StringVar()
-        self.difficulty_var.set("easy")
-        
-        difficulty_menu = ttk.Combobox(self.frame, textvariable=self.difficulty_var, values=["easy", "medium", "hard"])
-        difficulty_menu.grid(row=0, column=1, columnspan=2, padx=5, pady=10, sticky="E")
-        difficulty_menu.bind("<<ComboboxSelected>>", self.changeDifficulty)
-        
-        # Create horizontal radio buttons
-        # easy_button = tk.Radiobutton(self.frame, text="Easy", variable=self.difficulty_var, value="easy", command=self.changeDifficulty, font=("Helvetica", 12), bg="#323437", fg="#d1d0c5")
-        # easy_button.grid(row=0, column=0, padx=5, pady=10, sticky="W")
-        
-        # medium_button = tk.Radiobutton(self.frame, text="Medium", variable=self.difficulty_var, value="medium", command=self.changeDifficulty, font=("Helvetica", 12), bg="#323437", fg="#d1d0c5")
-        # medium_button.grid(row=0, column=1, padx=5, pady=10, sticky="W")
-        
-        # hard_button = tk.Radiobutton(self.frame, text="Hard", variable=self.difficulty_var, value="hard", command=self.changeDifficulty, font=("Helvetica", 12), bg="#323437", fg="#d1d0c5")
-        # hard_button.grid(row=0, column=2, padx=5, pady=10, sticky="W")
-        
-        # self.frame.columnconfigure(0, weight=1)
-        # self.frame.columnconfigure(1, weight=1)
-        # self.frame.columnconfigure(2, weight=1)
-        
-        
-        self.sample_label = tk.Label(self.frame, text="", font=("Helvetica", 18),fg = "#d1d0c5", bg="#323437", wraplength=600, justify="center")
-        self.sample_label.grid(row=1, column=0, columnspan=2, padx=5, pady=30)
+        self.sample_label = customtkinter.CTkLabel(self.frame, text="", font=("Helvetica", 24), wraplength=600, justify="center")
+        self.sample_label.pack(padx=30, pady=20)
         self.randomSentence()
         
-        self.input_entry = tk.Entry(self.frame, width=40, font=("Helvetica", 24), bg="#c0c0c0")
-        self.input_entry.grid(row=2, column=0, columnspan=2, padx=5, pady=20, ipadx=10, ipady=10)
+        self.input_entry = customtkinter.CTkEntry(self.frame, width=600, font=("Helvetica", 28), placeholder_text="lets roll...", takefocus=True)
+        self.input_entry.focus_set()
+        self.input_entry.pack(padx=30, pady=20, ipady=15, ipadx=15)
         self.input_entry.bind("<KeyRelease>", self.start)
         
-        self.speed_label = tk.Label(self.frame, text="Speed: 0.00 CPS 0.00 CPM 0.00 WPS 0.00 WPM", font=("Helvectica", 18), fg = "#d1d0c5", bg="#323437")
-        self.speed_label.grid(row=3, column=0, columnspan=2, padx=5, pady=10)
-
-        self.reset_button = tk.Button(self.frame, text="Reset", command=self.reset, font=("Helvetica", 12),bg="#c0c0c0")
-        self.reset_button.grid(row=4, column=0, columnspan=2, padx=5, pady=10)
+        self.speed_label = customtkinter.CTkLabel(self.frame, text="Speed: 0.00 CPS || 0.00 CPM || 0.00 WPS || 0.00 WPM", font=("Helvectica", 18))
+        self.speed_label.pack(padx=40, pady=20)
         
-        self.frame.pack(expand=True)
+
+        self.reset_button = customtkinter.CTkButton(self.frame, text="Reset", command=self.reset, font=("Helvetica", 18))
+        self.reset_button.pack(padx=20, pady=30)
+
         
         self.counter = 0
         self.running = False
-        
         self.root.mainloop()
-        
+
     def start(self, event):
         if not self.running:
-            if not event.keycode in [16, 17, 18]:
+            if event.keycode not in [16, 17, 18]:
                 self.running = True
                 t = threading.Thread(target=self.time_thread)
                 t.start()
-        
-        if not self.sample_label.cget('text').startswith(self.input_entry.get()):
-            self.input_entry.config(fg="red")
+
+        current_text = self.sample_label.cget('text')
+        entered_text = self.input_entry.get()
+
+        if not current_text.startswith(entered_text):
+            self.input_entry.configure(fg_color="#FF2400")  
         else:
-            self.input_entry.config(fg="black")
-        
-        if self.input_entry.get() == self.sample_label.cget('text'):
+            self.input_entry.configure(fg_color="black")  
+
+        if entered_text == current_text:
             self.running = False
-            self.input_entry.config(fg="green")
-            
+            self.input_entry.configure(fg_color="green")  
     
     def time_thread(self):
         while self.running:
@@ -97,29 +91,39 @@ class TypeSpeedGUI:
             else:
                 wps = len(self.input_entry.get().split(" ")) / self.counter
             wpm = wps * 60
-            self.speed_label.config(text=f"Speed:  {cps:.2f} CPS {cpm:.2f} CPM {wps:.2f} WPS {wpm:.2f} WPM")
+            self.speed_label.configure(text=f"Speed:  {cps:.2f} CPS || {cpm:.2f} CPM || {wps:.2f} WPS || {wpm:.2f} WPM")
             
         
     def reset(self):
         self.running = False
         self.counter = 0
-        self.speed_label.config(text="Speed: 0.00 CPS 0.00 CPM 0.00 WPS 0.00 WPM")
+        self.speed_label.configure(text="Speed: 0.00 CPS || 0.00 CPM || 0.00 WPS || 0.00 WPM")
         self.randomSentence()
+        self.input_entry.focus_set()
+        self.input_entry.configure(fg_color="#1a1a1a")
         self.input_entry.delete(0, tk.END)
     
     
     def randomSentence(self):
-        level = self.difficulty_var.get()
+        level = self.difficulty.get()
         if level == "easy":
-            random_text =  easySentence()
+            random_text =  easy_paragraph()
+            
         elif level == "medium":
-            random_text = mediumSentence()
+            random_text = medium_paragraph()
+            
         else:
-            random_text = hardSentence()
+            random_text = hard_paragraph()
         
-        self.sample_label.config(text=random_text)
-        
+        self.sample_label.configure(text=random_text)
+       
+ 
     def changeDifficulty(self, event):
+        print("difficulty changed")
         self.randomSentence()
+   
+
+# TypeSpeedGUI()
     
-TypeSpeedGUI()
+if __name__ == "__main__":
+    TypeSpeedGUI()
