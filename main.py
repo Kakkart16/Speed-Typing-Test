@@ -35,21 +35,22 @@ class TypeSpeedGUI:
             variable = self.difficulty,
             command=self.changeDifficulty
         )
-        difficulty_menu.pack(padx=30, pady=30)
+        difficulty_menu.pack(padx=30, pady=20)
         # difficulty_menu.bind('<<ComboBoxSelected>>',self.changeDifficulty)
        
         
         self.sample_label = customtkinter.CTkLabel(self.frame, text="", font=("Helvetica", 24), wraplength=600, justify="center", height=140)
-        self.sample_label.pack(padx=30, pady=10)
+        self.sample_label.pack(padx=30, pady=0)
         self.randomSentence()
         
-        self.input_entry = customtkinter.CTkEntry(self.frame, width=600, font=("Helvetica", 28), placeholder_text="lets roll...", takefocus=True)
-        self.input_entry.focus_set()
+        self.input_entry = customtkinter.CTkEntry(self.frame, width=600, font=("Helvetica", 28), placeholder_text="lets roll...")
+        
         self.input_entry.pack(padx=30, pady=20, ipady=15, ipadx=15)
         self.input_entry.bind("<KeyRelease>", self.start)
         
         self.metrics_frame = customtkinter.CTkFrame(self.frame)
         self.metrics_frame.pack(pady=20)
+        
 
         self.CPS = customtkinter.CTkLabel(self.metrics_frame, text="CPS", font=("Helvetica", 16))
         self.CPS.grid(row =0, column=0, padx=20, pady=5)
@@ -60,41 +61,32 @@ class TypeSpeedGUI:
         self.WPM = customtkinter.CTkLabel(self.metrics_frame, text="WPM", font=("Helvetica", 16))
         self.WPM.grid(row =0, column=3, padx=20, pady=5)
         
-        self.CPS1 = customtkinter.CTkEntry(self.metrics_frame, placeholder_text="0.00", font=("Helvetica", 16), width=55, justify="center")
+        self.CPS1 = customtkinter.CTkEntry(self.metrics_frame, placeholder_text="0.00", font=("Helvetica", 16), width=55, justify="center", state="disabled")
         self.CPS1.grid(row =1, column=0, padx=20, pady=5)
-        self.CPM1 = customtkinter.CTkEntry(self.metrics_frame, placeholder_text="0.00", font=("Helvetica", 16), width=55, justify="center")
+        self.CPM1 = customtkinter.CTkEntry(self.metrics_frame, placeholder_text="0.00", font=("Helvetica", 16), width=55, justify="center", state="disabled")
         self.CPM1.grid(row =1, column=1, padx=20, pady=5)
-        self.WPS1 = customtkinter.CTkEntry(self.metrics_frame, placeholder_text="0.00", font=("Helvetica", 16), width=55, justify="center")
+        self.WPS1 = customtkinter.CTkEntry(self.metrics_frame, placeholder_text="0.00", font=("Helvetica", 16), width=55, justify="center", state="disabled")
         self.WPS1.grid(row =1, column=2, padx=20, pady=5)
-        self.WPM1 = customtkinter.CTkEntry(self.metrics_frame, placeholder_text="0.00", font=("Helvetica", 16), width=55, justify="center")
+        self.WPM1 = customtkinter.CTkEntry(self.metrics_frame, placeholder_text="0.00", font=("Helvetica", 16), width=55, justify="center", state="disabled")
         self.WPM1.grid(row =1, column=3, padx=20, pady=5)
-        
-        
-        # self.metrics_labels = ["CPS", "CPM", "WPS", "WPM"]
-        # self.metric_entries = {}
-
-        # for i, metric_label in enumerate(self.metrics_labels):
-        #     self.label = customtkinter.CTkLabel(self.metrics_frame, text=metric_label, font=("Helvetica", 16))
-        #     self.label.grid(row=0, column=i, padx=20, pady=5)
-            
-        #     self.entry = customtkinter.CTkEntry(self.metrics_frame, placeholder_text="0.00", width=70, font=("Helvetica", 16), state="disabled")
-        #     self.entry.grid(row=1, column=i, padx=20, pady=5)
-        #     self.metric_entries[metric_label] = self.entry
-            
             
         # self.speed_label = customtkinter.CTkLabel(self.frame, text="Speed: 0.00 CPS || 0.00 CPM || 0.00 WPS || 0.00 WPM", font=("Helvectica", 18))
         # self.speed_label.pack(padx=40, pady=20)
         
-
         self.reset_button = customtkinter.CTkButton(self.frame, text="Reset", command=self.reset, font=("Helvetica", 18))
         self.reset_button.pack(padx=20, pady=20)
 
         
         self.counter = 0
         self.running = False
+        
+        
+        
         self.root.mainloop()
+        self.input_entry.focus_set()
 
     def start(self, event):
+
         if not self.running:
             if event.keycode not in [16, 17, 18]:
                 self.running = True
@@ -128,11 +120,19 @@ class TypeSpeedGUI:
                 wps = len(self.input_entry.get().split(" ")) / self.counter
             wpm = wps * 60
             
-
-            self.CPS1.configure(placeholder_text = f"{cps:.2f}")
-            self.CPM1.configure(placeholder_text = f"{cpm:.2f}")
-            self.WPS1.configure(placeholder_text = f"{wps:.2f}")
-            self.WPM1.configure(placeholder_text = f"{wpm:.2f}")
+            x = customtkinter.StringVar(value=f"{cps:.2f}")
+            self.CPS1.configure(textvariable = x)
+            x = customtkinter.StringVar(value=f"{cpm:.2f}")
+            self.CPM1.configure(textvariable = x)
+            x = customtkinter.StringVar(value=f"{wps:.2f}")
+            self.WPS1.configure(textvariable = x)
+            x = customtkinter.StringVar(value=f"{wpm:.2f}")
+            self.WPM1.configure(textvariable = x)
+            
+            # self.CPS1.configure(placeholder_text = f"{cps:.2f}")
+            # self.CPM1.configure(placeholder_text = f"{cpm:.2f}")
+            # self.WPS1.configure(placeholder_text = f"{wps:.2f}")
+            # self.WPM1.configure(placeholder_text = f"{wpm:.2f}")
             
                         
             # self.speed_label.configure(text=f"Speed:  {cps:.2f} CPS || {cpm:.2f} CPM || {wps:.2f} WPS || {wpm:.2f} WPM")
@@ -147,10 +147,11 @@ class TypeSpeedGUI:
         self.input_entry.configure(fg_color="#343638")
         self.input_entry.delete(0, tk.END)
         
-        self.CPS1.configure(placeholder_text = "0.00")
-        self.CPM1.configure(placeholder_text = "0.00")
-        self.WPS1.configure(placeholder_text = "0.00")
-        self.WPM1.configure(placeholder_text = "0.00")
+        x = customtkinter.StringVar(value="0.00")
+        self.CPS1.configure(textvariable = x)
+        self.CPM1.configure(textvariable = x)
+        self.WPS1.configure(textvariable = x)
+        self.WPM1.configure(textvariable = x)
         
     
     
@@ -177,3 +178,6 @@ class TypeSpeedGUI:
     
 if __name__ == "__main__":
     TypeSpeedGUI()
+
+
+
